@@ -23,14 +23,25 @@ logger = logging.getLogger("litellm_model")
 # litellm._turn_on_debug()
 
 
+def _get_cost_tracking_default() -> Literal["default", "ignore_errors"]:
+    """Get cost tracking default at runtime (not import time)."""
+    return os.getenv("MSWEA_COST_TRACKING", "default")  # type: ignore
+
+
 class LitellmModelConfig(BaseModel):
     model_name: str
     model_kwargs: dict[str, Any] = {}
     litellm_model_registry: Path | str | None = os.getenv("LITELLM_MODEL_REGISTRY_PATH")
     set_cache_control: Literal["default_end"] | None = None
     """Set explicit cache control markers, for example for Anthropic models"""
-    cost_tracking: Literal["default", "ignore_errors"] = os.getenv("MSWEA_COST_TRACKING", "default")
+    cost_tracking: Literal["default", "ignore_errors"] = None  # type: ignore
     """Cost tracking mode for this model. Can be "default" or "ignore_errors" (ignore errors/missing cost info)"""
+
+    def __init__(self, **data):
+        # Evaluate cost_tracking at runtime if not provided
+        if data.get("cost_tracking") is None:
+            data["cost_tracking"] = _get_cost_tracking_default()
+        super().__init__(**data)
 
 
 class LitellmModel:

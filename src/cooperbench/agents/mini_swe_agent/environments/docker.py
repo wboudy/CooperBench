@@ -56,6 +56,7 @@ class DockerEnvironment:
         run_kwargs = {
             "image": self.config.image,
             "command": "sleep infinity",
+            "entrypoint": [],  # Clear entrypoint to bypass runner.sh (task images have eval entrypoint)
             "detach": True,
             "working_dir": self.config.cwd,
             "environment": env_vars,

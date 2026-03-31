@@ -428,6 +428,7 @@ def _merge_union(sb: Sandbox, base_sha: str) -> dict:
     """Try union merge strategy."""
     commands = f"""
 cd /workspace/repo
+rm -f .git/index.lock
 git checkout agent2 2>&1
 git reset --hard HEAD 2>&1
 
@@ -466,6 +467,9 @@ def _run_tests(sb: Sandbox, tests_patch: str, feature_patch: str, base_sha: str)
     """Run tests via runner.sh."""
     commands = f"""
 cd /workspace/repo
+
+# Remove stale lock file if present
+rm -f .git/index.lock
 
 # Reset to base commit
 git checkout --force {base_sha} 2>&1

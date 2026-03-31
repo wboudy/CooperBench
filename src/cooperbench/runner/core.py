@@ -160,7 +160,7 @@ def run(
                 if run_info:
                     from cooperbench.eval.evaluate import _evaluate_single
 
-                    eval_result = _evaluate_single(run_info, force=force)
+                    eval_result = _evaluate_single(run_info, force=force, backend=backend)
                     if eval_result:
                         stats = _process_eval_result(eval_result, tasks[0])
                         if stats:
@@ -408,7 +408,7 @@ def _run_with_progress(
                         if auto_eval and status in ("done", "skip") and eval_executor:
                             run_info = _build_run_info(result, task_info, setting, run_name)
                             if run_info:
-                                eval_future = eval_executor.submit(_evaluate_single, run_info, force)
+                                eval_future = eval_executor.submit(_evaluate_single, run_info, force, backend)
                                 eval_futures[eval_future] = (task_info, result, task_name, feat_str)
                             progress.console.print(f"{status_display} {task_name} [dim][{feat_str}][/dim]")
                         else:
