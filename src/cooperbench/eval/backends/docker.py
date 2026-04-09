@@ -93,6 +93,7 @@ class DockerBackend:
         container = client.containers.run(
             image=image,
             command="sleep infinity",
+            entrypoint=[],
             detach=True,
             working_dir=workdir,
             remove=False,
